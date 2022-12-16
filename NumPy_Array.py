@@ -1,11 +1,3 @@
-# %% [markdown]
-# # NumPy
-# 
-# 
-# ## Indice:
-# * [Array](#Array)
-# * * [Slicing](#Slicing)
-
 # %%
 import numpy as np
 
