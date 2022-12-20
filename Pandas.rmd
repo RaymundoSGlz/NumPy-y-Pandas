@@ -4,9 +4,7 @@ date: "`r Sys.Date()`"
 ---
 
 ```{r setup, include=FALSE}
-
 library(reticulate)
-
 ```
 
 Pandas es una librería de Python especializada en el **manejo y análisis de estructura de datos**, el nombre pandas viene de "**Panel data**". Se caracteriza por su:
@@ -108,4 +106,149 @@ df_Players.index
 ```{python}
 df_Players = pd.DataFrame(dictionary, index=[1,7,10,30])
 df_Players.index
+```
+
+## Leer archivos CSV y JSON
+
+Podemos cargar archivos a través de URL, JSON, HTML, etc.
+
+### CSV
+
+```{python}
+csv_per_default = pd.read_csv('./Data/bestsellers-with-categories.csv')
+csv_per_default
+```
+#### Cambiar el encabezado
+
+Lo podemos hacer con “**Header**”, este pondrá de encabezado los valores que tenga en esa posición.
+
+```{python}
+pd.read_csv('./Data/bestsellers-with-categories.csv', sep=",", header= 2)
+```
+
+#### Cambiar el nombre de las columnas
+ 
+Lo podemos hacer con “**names**”
+
+```{python}
+df_books = pd.read_csv(
+	'./Data/bestsellers-with-categories.csv',
+	sep=",",
+	header=0
+)
+df_books.columns
+```
+
+```{python}
+df_books = pd.read_csv(
+	'./Data/bestsellers-with-categories.csv',
+	sep=",",
+	header=0,
+	names=['Nombre', 'Autor', 'Valoracion', 'Reseñas', 'Precio', 'Año', 'Genero']
+)
+df_books
+```
+
+### JSON
+
+Podemos cargar el archivo JSON como un DataFrame por default, u otra forma de llevar la estructura JSON a una estructura de Pandas como una Series
+
+```{python}
+json_per_default = pd.read_json('./Data/hpcharactersdataraw.json')
+json_per_default
+```
+
+podemos indexar una lista en raw del formato llave valor del JSON
+
+```{python}
+pd.read_json('./Data/hpcharactersdataraw.json',typ='Series')
+```
+
+## Filtrado con loc y iloc
+
+Cuando queremos navegar por un dataFrame estas funciones permiten filtrar datos de manera más específica
+
+```{python}
+df_books = pd.read_csv('./data/bestsellers-with-categories.csv')
+df_books
+df_books[0:4]
+```
+### Filtrado por columnas
+
+Filtrar una columna
+
+```{python}
+df_books['Name']
+```
+
+Filtrar dos o mas columnas
+
+```{python}
+df_books[['Name','Author','Year']]
+```
+
+### Filtrado con loc
+
+Acceda a un grupo de filas y columnas por etiqueta(s) o una matriz booleana.
+
+A diferencia del el slicing normal, que corta por la posición del index con dataframe. loc tienes la posición de start y stop para filtrar.
+
+```{python}
+
+```
+#### Filtrar con slicing
+
+```{python}
+df_books.loc[0:4]
+```
+
+#### Filtrar varios tags
+
+```{python}
+df_books.loc[0:4, ['Name','User Rating','Reviews']]
+```
+
+#### Filtrar y modificar
+
+```{python}
+df_books.loc[0:4, ['User Rating']] * 20
+```
+
+#### Filtrar por condición
+
+>Devuelve una lista booleana de quien cumple la condición
+
+```{python}
+df_books.loc[:, ['Author']] == 'Jen Sincero	'
+```
+
+### Filtrado con iloc
+
+Indexación puramente basada en la ubicación de enteros para la selección por posición.
+
+#### Filtrar con Slicing
+
+```{python}
+df_books.iloc[:]
+```
+
+#### Filtrar con Indice
+
+```{python}
+df_books.iloc[:,0:3]
+```
+
+#### Buscar un dato especifico
+
+```{python}
+df_books.iloc[1,3]
+```
+
+## Agregar o eliminar datos
+
+Partimos con nuestro dataFrame
+
+```{python}
+df_books = pd.read_csv('./data/bestsellers-with-categories.csv')
+df_books.head(2)
 ```
