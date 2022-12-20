@@ -1,0 +1,111 @@
+---
+title: "Pandas"
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+
+library(reticulate)
+
+```
+
+Pandas es una librería de Python especializada en el **manejo y análisis de estructura de datos**, el nombre pandas viene de "**Panel data**". Se caracteriza por su:
+
+-   Velocidad
+-   Poco código
+-   Múltiples formatos de archivos
+-   Alineación inteligente
+
+La forma común de importarla es
+
+```{python}
+
+import pandas as pd
+
+```
+
+## Series y DataFrames
+
+### Series
+
+Son arreglos **unidimensionales** indexados
+
+#### Series con index personalizados
+
+```{python}
+psg_players = pd.Series(['Navas','Mbappe','Neymar','Messi'], index=[1,7,10,30])
+psg_players
+```
+#### Series con index default
+
+```{python}
+psg_players = pd.Series(['Navas','Mbappe','Neymar','Messi'])
+psg_players
+```
+
+#### Series con diccionario JSON
+
+```{python}
+dictionary = {1: 'Navas', 7:'Mbappe', 10:'Neymar', 30:'Messi'}
+pd.Series(dictionary)
+```
+
+### Slicing
+
+Podemos acceder a los datos de la misma forma que lo hacemos con NumPy
+
+```{python}
+psg_players[0:3]
+```
+
+### DataFrame matricial
+
+Podemos trabajar con estructuras matriciales
+
+```{python}
+dictionary = {'jugador':['Navas','Mbappe','Neymar','Messi'],
+'altura':[183.0, 170.0, 170.0, 165.0],
+'goles':[2, 200, 200, 200]
+}
+dictionary
+```
+
+#### DataFrame con index personalizado
+
+```{python}
+pd.DataFrame(dictionary, index=[1,7,10,30])
+```
+
+#### DataFrame con index default
+
+```{python}
+pd.DataFrame(dictionary)
+```
+
+### Visualizar ejes en DataFrame
+
+```{python}
+df_Players = pd.DataFrame(dictionary)
+df_Players
+```
+
+#### Visualizar Data por columnas
+
+```{python}
+df_Players.columns
+```
+
+#### Visualizar Data por indices
+
+##### Indice default
+
+```{python}
+df_Players.index
+```
+
+##### Indice personalizado
+
+```{python}
+df_Players = pd.DataFrame(dictionary, index=[1,7,10,30])
+df_Players.index
+```
