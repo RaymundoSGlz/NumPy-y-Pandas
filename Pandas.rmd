@@ -345,5 +345,173 @@ Podemos por ejemplo duplicar los datos de nuestro DataFrame
 df_books.append(df_books)
 ```
 
-## manejo de datos nulos
+## Manejo de datos nulos
 
+En muchas ocasiones nos encotraremos con datos nulos, podemos entonces trabajar con ellos
+
+Partiendo de el suguiente ejemplo de DataFrame
+
+```{python}
+dict = {'Col1':[1,2,3,np.nan],
+'Col2':[4, np.nan,6,7],
+'Col3':['a','b','c', None]}
+
+df = pd.DataFrame(dict)
+df
+```
+### Identificar valores nulos en un DataFrame
+
+#### forma booleana
+
+```{python}
+df.isnull()
+```
+
+#### Forma numerica
+
+```{python}
+df.isnull() * 1
+```
+### Sustituir los valores nulos
+
+#### Por una cadena
+
+```{python}
+df.fillna('Missing')
+```
+
+#### Por una medida estadística realizada con los valores de las columnas
+
+```{python}
+df.fillna(df.mean())
+```
+
+#### por valores de interpolación
+
+```{python}
+df.interpolate()
+```
+
+### Eliminar datos nulos
+
+```{python}
+df.dropna()
+```
+
+## Filtrado por conciciones
+
+Dado nuestro DataFrame
+
+```{python}
+df_books = pd.read_csv('./data/bestsellers-with-categories.csv')
+df_books.head(2)
+```
+
+### Mostrar datos mayores a cierto valor
+
+mostramos un DataFrame booleano con los datos que cumplen la condicion
+
+```{python}
+mayor_a_2016 = df_books['Year'] > 2016
+df_books[mayor_a_2016].head(4)
+```
+
+Podemos directamente colocar la condición como parámetro
+
+```{python}
+df_books[df_books['Year'] > 2016].head(4)
+```
+
+### Mostrar datos que coincidan con cierto valor
+
+```{python}
+genre_fiction = df_books['Genre'] == "Fiction"
+df_books[genre_fiction].head(4)
+```
+
+### Multiples condiciones
+
+```{python}
+df_books[genre_fiction & mayor_a_2016]
+```
+
+### Filtrado con negacion
+
+```{python}
+df_books[~mayor_a_2016]
+```
+
+### Filtrado contenga una palabra especifica en una cadena de texto
+
+```{python}
+smith_surname = df_books['Author'].str.contains('Mel')
+df_books[smith_surname]
+```
+
+## Funciones principales
+
+### `.info()`
+
+Mostrar información acerca de los datos que contiene el DataFrame
+
+```{python}
+df_books.info()
+```
+
+### `.describe()`
+
+Obtener diferentes datos estadísticos de las columnas numéricas
+
+```{python}
+df_books.describe()
+```
+
+### `.tail()`
+
+Mostrar los últimos 5 registros del DataFrame
+
+```{python}
+df_books.tail()
+```
+
+### `.memory_usage()`
+
+Obtener el uso de la memoria de cada columna
+
+```{python}
+df_books.memory_usage(deep=True)
+```
+
+### `.value_counts()`
+
+Obtener *cuantos datos* tenemos de algo en específico
+
+```{python}
+df_books['Author'].value_counts()
+```
+
+### `.drop_duplicates()`
+
+Eliminar registros duplicados
+
+```{python}
+df_books.drop_duplicates()
+```
+
+### `.sort_values()`
+
+Ordenar los registros según valores de la columna
+
+#### Orden ascendente
+
+```{python}
+df_books.sort_values('Year')
+```
+
+#### Orden descendente
+
+```{python}
+df_books.sort_values('Year', ascending=False)
+```
+
+## Groupby
