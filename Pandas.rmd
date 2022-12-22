@@ -1,6 +1,11 @@
 ---
 title: "Pandas"
-date: "`r Sys.Date()`"
+date: "`r format(Sys.time(), '%B %Y')`"
+output: 
+  html_document:
+    toc: true # table of content true
+    toc_depth: 4  # upto three depths of headings (specified by #, ## and ###)
+    theme: united  # many options for theme, this one is my favorite.
 ---
 
 ```{r setup, include=FALSE}
@@ -17,9 +22,7 @@ Pandas es una librería de Python especializada en el **manejo y análisis de es
 La forma común de importarla es
 
 ```{python}
-
 import pandas as pd
-
 ```
 
 ## Series y DataFrames
@@ -193,9 +196,6 @@ Acceda a un grupo de filas y columnas por etiqueta(s) o una matriz booleana.
 
 A diferencia del el slicing normal, que corta por la posición del index con dataframe. loc tienes la posición de start y stop para filtrar.
 
-```{python}
-
-```
 #### Filtrar con slicing
 
 ```{python}
@@ -252,3 +252,98 @@ Partimos con nuestro dataFrame
 df_books = pd.read_csv('./data/bestsellers-with-categories.csv')
 df_books.head(2)
 ```
+### Eliminar columnas
+
+#### Sin modificar el DataFrame
+
+```{python}
+df_books.drop('Genre',axis=1).head(2)
+df_books.head(2)
+```
+
+#### Remplazando el DataFame original
+
+##### utilizando `inplace`
+
+```{python}
+df_books.drop('Genre', axis=1, inplace=True)
+df_books.head(2)
+```
+
+##### Cambiando el valor de referencia en memoria
+
+```{python}
+df_books = df_books.drop('Year',axis=1)
+df_books.head(2)
+```
+
+##### Usando Python Vainilla
+
+```{python}
+del df_books['Price']
+df_books.head(2)
+```
+
+### Eliminar filas
+ Podemos eliminar filas de la misma manera que con las columnas simplemente cambiando el valor del axis
+
+```{python}
+df_books.drop(0,axis=0).head(2)
+```
+
+#### Eliminar una lista de filas
+
+##### Utilizando un array
+```{python}
+df_books.drop([0,1,2],axis=0).head(2)
+```
+
+##### Utilizando `range()`
+
+```{python}
+df_books.drop(range(0,10), axis=0).head(2)
+```
+
+### Agregar columnas
+
+Mostremos primero nuestro DataFrame e importamos NumPy para asignar el valor nulo
+```{python}
+import numpy as np
+
+df_books.head(2)
+```
+
+#### Agregar una columna con valores nulos
+```{python}
+df_books['Nueva Columna'] = np.nan
+df_books.head(2)
+```
+#### Asignando datos a una columna
+
+Creamos un array de datos con el numero de elementos de nuestro DataFrame
+
+```{python}
+data = np.arange(0, df_books.shape[0])
+#data
+```
+Asignamos estos valores a una nueva columna
+
+> *Una regla es que todo rango que vaya a asignar al DataFrame debe tener la misma longitud en columnas y filas para que no haya error*
+
+```{python}
+df_books['Rango'] = data
+df_books.head(2)
+```
+
+### Agregar filas
+
+Para añadir filas se utiliza la función `append` de Python añadiendo como parámetro una lista, diccionario o añadiendo los valores manualmente.
+
+Podemos por ejemplo duplicar los datos de nuestro DataFrame
+
+```{python}
+df_books.append(df_books)
+```
+
+## manejo de datos nulos
+
