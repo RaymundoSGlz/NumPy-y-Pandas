@@ -515,3 +515,321 @@ df_books.sort_values('Year', ascending=False)
 ```
 
 ## Groupby
+
+Permite agrupar datos en función de los demás. Es decir, hacer el análisis del DataFrame en función de una de las columnas.
+
+### `.count()`
+
+Agrupar por **Author** y mostrar el *conteo* de los datos de las demás columnas
+
+```{python}
+df_books.groupby('Author').count()
+```
+
+Agrupar por **‘Author - Year’** y contar los valores de las demás columnas
+
+```{python}
+df_books.groupby(['Author','Year']).count()
+```
+
+### `.median()`
+
+Agrupar por **Author** y mostrar la *media* de los datos de las demás columnas
+
+```{python}
+df_books.groupby('Author').median()
+```
+
+> La columna **Author**, en los casos anteriores, pasa a ser el índice.
+
+### `.loc()`
+
+Podemos usar `loc()` y acceder a un dato específico del DataFrame. Agrupar por **Author** y mostrar la **suma** de los valores de las demás columnas para *William Davis*
+
+```{python}
+df_books.groupby('Author').sum().loc['William Davis']
+```
+
+### `.reset_index()`
+
+Agrupar por **Author** y mostrar la **suma** de los valores de las demás columnas. Colocar los *índices* que el DataFrame trae por defecto
+
+```{python}
+df_books.groupby('Author').sum().reset_index()
+```
+
+### `.agg()`
+
+Permite aplicar varias funciones al DataFrame una vez agrupado según una columna específica. 
+
+Agrupar por **Author** y mostrar el *mínimo* y *máximo* de las demás columnas
+
+```{python}
+df_books.groupby('Author').agg(['min','max'])
+```
+
+Agrupar por **Author**, obtener el *mínimo* y *máximo* de la columna **‘Reviews’** y sumar los valores de la columna **‘User Rating’**
+
+```{python}
+df_books.groupby('Author').agg({'Reviews':['min','max'], 'User Rating':'sum'})
+```
+
+## Combinando DataFrames
+
+Existen diferentes formas de fusionar dos DataFrames. Esto se hace a través de la lógica de combinación
+
+### **Left join**
+
+Da prioridad al DataFrame de la izquierda. Trae siempre los datos de la izquierda y las filas en común con el DataFrame de la derecha.
+
+### **Right join**
+
+Da prioridad al DataFrame de la derecha. Trae siempre los datos de la derecha y las filas en común con el DataFrame de la izquierda.
+
+### **Inner join**
+
+Trae solamente aquellos datos que son común en ambos DataFrame
+
+### **Outer join**
+
+Trae los datos tanto del DataFrame de la izquierda como el de la derecha, incluyendo los datos que comparten ambos.
+
+## Merge y concat
+
+### concat
+
+Permite combinar dos DataFrames a nivel de filas. Crecimiento vertical
+
+#### Crear un DataFrame nuevo
+
+```{python}
+df1 = pd.DataFrame({'A':['A0', 'A1', 'A2','A3'],
+        'B':['B0', 'B1', 'B2','B3'],
+	'C':['C0', 'C1', 'C2','C3'],
+	'D':['D0', 'D1', 'D2','D3']})
+
+
+df2 = pd.DataFrame({'A':['A4', 'A5', 'A6','A7'],
+	'B':['B4', 'B5', 'B6','B7'],
+	'C':['C4', 'C5', 'C6','C7'],
+	'D':['D4', 'D5', 'D6','D7']})
+```
+```{python}
+print(f'DataFrame 1: \n {df1} \n DataFrame 2: \n {df2}')
+```
+
+#### Concatenar los DataFrames
+
+```{python}
+pd.concat([df1,df2])
+```
+
+#### Corregir los indices
+
+```{python}
+pd.concat([df1,df2], ignore_index= True)
+```
+
+#### Por *axis 1*
+
+```{python}
+pd.concat([df1,df2], axis = 1)
+```
+
+### Merge
+
+Permite combinar dos DataFrames a nivel de columnas. La organización por columnas no va a ser la misma para ambos DataFrames, por tanto, se crearan valores `NaN` para rellenar los espacios vacíos. Crecimiento horizontal
+
+#### Key en común
+
+```{python}
+izq = pd.DataFrame({'key' : ['k0', 'k1', 'k2','k3'],
+ 'A' : ['A0', 'A1', 'A2','A3'],
+'B': ['B0', 'B1', 'B2','B3']})
+
+der = pd.DataFrame({'key' : ['k0', 'k1', 'k2','k3'],
+ 'C' : ['C0', 'C1', 'C2','C3'],
+'D': ['D0', 'D1', 'D2','D3']})
+```
+Unir el DataFrame **Der** a **Izq**
+
+```{python}
+izq.merge(der)
+```
+
+#### Sin columnas en común
+
+```{python}
+izq = pd.DataFrame({'key' : ['k0', 'k1', 'k2','k3'],
+ 'A' : ['A0', 'A1', 'A2','A3'],
+'B': ['B0', 'B1', 'B2','B3']})
+
+der = pd.DataFrame({'key_2' : ['k0', 'k1', 'k2','k3'],
+ 'C' : ['C0', 'C1', 'C2','C3'],
+'D': ['D0', 'D1', 'D2','D3']})
+```
+
+Debemos especificar las llaves
+
+```{python}
+izq.merge(der, left_on = 'key', right_on='key_2')
+```
+
+#### Cuando hay algún `NaN` en nuestro DataFrame
+
+```{python}
+izq = pd.DataFrame({'key' : ['k0', 'k1', 'k2','k3'],
+ 'A' : ['A0', 'A1', 'A2','A3'],
+'B': ['B0', 'B1', 'B2','B3']})
+
+der = pd.DataFrame({'key_2' : ['k0', 'k1', 'k2',np.nan],
+ 'C' : ['C0', 'C1', 'C2','C3'],
+'D': ['D0', 'D1', 'D2','D3']})
+```
+
+```{python}
+izq.merge(der, left_on = 'key', right_on='key_2', how='left')
+```
+
+## JOIN
+
+Es otra herramienta para hacer exactamente lo mismo, una combinación. La diferencia es que `join` va a ir a los índices y no a columnas específicas.
+
+```{python}
+izq = pd.DataFrame({'A': ['A0','A1','A2'],
+  'B':['B0','B1','B2']},
+  index=['k0','k1','k2'])
+
+der = pd.DataFrame({'C': ['C0','C1','C2'],
+  'D':['D0','D1','D2']},
+  index=['k0','k2','k3'])
+```
+
+### Combinar **izq** con **der**
+
+```{python}
+izq.join(der)
+```
+
+### Traer todos los datos aunque no hagan match
+
+```{python}
+izq.join(der, how = 'outer')
+```
+
+> `join` puede considerase como un caso específico de merge, pero más eficiente
+
+## Pivot y Melt
+
+Son funciones que sirven para cambiar la estructura de nuestro DataFrame de acuerdo a nuestras necesidades.
+
+### Pivot
+
+Pivot, básicamente, transforma los valores de determinadas columnas o filas en los índices de un nuevo DataFrame, y la intersección de estos es el valor resultante.
+
+Partamos del siguiente DataFrame
+
+```{python}
+df_books.head()
+```
+Aplicamos `.pivot_table()`
+
+```{python}
+df_books.pivot_table(index='Author',columns='Genre',values='User Rating')
+```
+
+Como resultado, los valores de Author pasan a formar el índice por fila y los valores de Genre pasan a formar parte de los índices por columna, y el User Rating se mantiene como valor.
+
+#### `aggfunc`
+
+```{python}
+df_books.pivot_table(index='Genre',columns='Year', values='User Rating',aggfunc='sum')
+```
+
+En este caso tenemos por cada género, la suma a lo largo de los años.
+
+También podemos obtener la media, la desviación estándar, el conteo, la varianza, etc. Únicamente con cambiar el parámetro `aggfunc` que traduce la función de agrupamiento.
+
+```{python}
+df_books.pivot_table(index='Genre', columns='Year', values='User Rating'
+												,aggfunc= [min, max, np.mean])
+```
+
+### Melt
+
+El método melt toma las columnas del DataFrame y las pasa a filas, con dos nuevas columnas para especificar la antigua columna y el valor que traía.
+
+```{python}
+df_books[['Name','Genre']].head(5)
+```
+
+Aplicando `melt()`
+
+```{python}
+df_books[['Name','Genre']].head(5).melt()
+```
+
+Ahora cada resultado de las dos columnas pasa a una fila de este modo a tipo **llave**:**valor**.
+
+Podemos utilizar melt también de la siguiente forma
+
+```{python}
+df_books.melt(id_vars='Year',value_vars='Genre')
+```
+
+Simplemente, podemos seleccionar las columnas que no quiero hacer `melt` usando el parámetro `id_vars`. Para este caso **Year** y también la única columna que quiero aplicar el `melt`, para este caso **Genre** con la propiedad `value_vars`.
+
+## Apply
+
+Es un comando muy poderoso que nos deja aplicar funciones a nuestro DataFrame
+
+```{python}
+df_books.head(2)
+```
+
+Creamos nuestra función
+
+```{python}
+def two_times(value):
+		return value * 2
+```
+
+Lo aplicamos a la columna de **User Rating**
+
+```{python}
+df_books['User Rating'].apply(two_times)
+```
+
+Podemos guardar los resultados en una nueva columna
+
+```{python}
+df_books['User Rating2'] = df_books['User Rating'].apply(two_times)
+df_books.head(5)
+```
+
+### Utilizando **lambda functions**
+
+```{python}
+df_books['User Rating2'] =df_books['User Rating'].apply(lambda x: x* 3)
+df_books.head()
+```
+
+Apply en varias columnas con condiciones, hay que especificar a que los vamos a aplicar (filas o columnas)
+
+```{python}
+df_books.apply(lambda x: x['User Rating'] * 2 if x['Genre'] == 'Fiction' else x['User Rating'], axis = 1)
+```
+
+Puedes usar funciones que reciban más argumentos especificando los demás argumentos en `args`. Por ejemplo una función que convierta el **rating** desde cualquier base a cualquier base sería
+
+```{python}
+# Una función con parametros
+def convert_rating_base(rating, current_base, new_base):
+    # Convertimos el Rating de la base actual a la nueva
+		return rating * new_base / current_base
+
+# Apply y se pasan todos los demás argumentos después del primero en args
+df_books["User Rating"].apply(convert_rating_base, args=(5, 7))
+```
+
+> Recordemos que podemos seleccionar una columna también de esta forma `df.Name` (Siempre y cuando su nombre no contenga espacios)
